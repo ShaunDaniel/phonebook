@@ -1,35 +1,37 @@
 const express = require("express")
 const morgan = require("morgan")
+const cors = require("cors")
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
+app.use(express.static('build'))
 
 app.use(express.json())
-
 morgan.token("req-body",(req)=>{return JSON.stringify(req.body)})
-
 app.use(morgan(':method :url :status :response-time ms :req-body '))
+app.use(cors())
+
 
 let peopleData = [
     { 
       "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
+      "name": "Anirudh Singhania", 
+      "number": "+91 9000000000"
     },
     { 
       "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
+      "name": "Rajesh Jaiswal", 
+      "number": "+91 8000000000"
     },
     { 
       "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
+      "name": "Pooja Chandra", 
+      "number": "+91 7000000000"
     },
     { 
       "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
+      "name": "Mary D'Souza", 
+      "number": "+91 9876543210"
     }
 ]
 
@@ -86,6 +88,22 @@ app.delete("/api/persons/:id",(req,res)=>{
         return res.status(404).send("Contact not found!")
     }    
 
+})
+
+app.put("/api/persons/:id",(req,res)=>{
+    const updateId = req.params.id
+    const updateIndex = peopleData.findIndex((person)=>person.id==Number(updateId))
+    console.log(updateId)
+    console.log(updateIndex)
+
+    if(updateIndex==-1){
+        res.status(404).send("Invalid ID!")
+        
+    }
+    else{
+        peopleData[updateIndex] = {"id":Number(updateId), "name":req.body.name, "number":req.body.number}
+        res.status(200).send("Updated contact!")
+    }
 })
 
 app.get("/info",(req,res)=>{
