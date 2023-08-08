@@ -5,7 +5,7 @@ Frameworks/Tech used -
 
 1. Node.js
 2. Express.js
-3. React
+3. React - [Repository link](https://github.com/ShaunDaniel/FullStackOpen-Submissions/tree/main/part2/phonebook)
 4. MongoDB - [NOT YET IMPLEMENTED]
 
 ### API endpoints - 
