@@ -31,6 +31,16 @@ app.get("/api/persons",(req,res)=>{
     res.json(peopleData)
 })
 
+app.get("/api/persons/:id",(req,res)=>{
+    personData = peopleData.find((person)=>person.id==req.params.id)
+    if(personData){
+        res.json(personData)
+    }
+    else{
+        res.sendStatus(404).send("404: Not found!")
+    }
+})
+
 app.get("/info",(req,res)=>{
     const date = new Date()
 
