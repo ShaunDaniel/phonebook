@@ -4,6 +4,8 @@ const express = require("express")
 const app = express()
 const port = 3000
 
+app.use(express.json())
+
 let peopleData = [
     { 
       "id": 1,
@@ -39,6 +41,17 @@ app.get("/api/persons/:id",(req,res)=>{
     else{
         res.sendStatus(404).send("404: Not found!")
     }
+})
+
+app.post("/api/persons",(req,res)=>{
+    const contact = {
+        "id":peopleData.length+1,
+        "name":req.body.name,
+        "number":req.body.number
+    }
+    peopleData.push(contact)
+    console.log(peopleData)
+    res.sendStatus(201).end()
 })
 
 app.delete("/api/persons/:id",(req,res)=>{
