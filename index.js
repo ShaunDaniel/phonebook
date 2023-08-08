@@ -49,14 +49,40 @@ app.post("/api/persons",(req,res)=>{
         "name":req.body.name,
         "number":req.body.number
     }
-    peopleData.push(contact)
-    console.log(peopleData)
-    res.sendStatus(201).end()
+    const dupliName = peopleData.some((person)=>person.name.toLowerCase()==contact.name.toLowerCase())
+    const dupliNum = peopleData.some((person)=>person.number==contact.number)
+    
+    console.log(req.body)
+    
+    if(!req.body.name || !req.body.number){
+        return res.status(400).send("Content missing from body.")
+    }
+    else{
+        if (dupliName || dupliNum){
+            return res.status(409).send("Name/Number already exists!")
+        }
+        else{
+            peopleData.push(contact)
+            console.log(peopleData)
+            return res.status(201).send("Data saved successfully!")
+
+        }
+        
+    }
+    
 })
 
 app.delete("/api/persons/:id",(req,res)=>{
-    peopleData = peopleData.filter((person)=>person.id!=req.params.id)
-    res.status(204).end()
+    contactExists = peopleData.some((person)=>person.id==req.params.id)
+
+    if(contactExists){
+        peopleData = peopleData.filter((person)=>person.id!=req.params.id)
+        return res.status(204).send("Contact deleted successfully!")
+    }
+    else{
+        return res.status(404).send("Contact not found!")
+    }    
+
 })
 
 app.get("/info",(req,res)=>{
