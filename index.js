@@ -4,7 +4,7 @@ const express = require("express")
 const app = express()
 const port = 3000
 
-const peopleData = [
+let peopleData = [
     { 
       "id": 1,
       "name": "Arto Hellas", 
@@ -39,6 +39,11 @@ app.get("/api/persons/:id",(req,res)=>{
     else{
         res.sendStatus(404).send("404: Not found!")
     }
+})
+
+app.delete("/api/persons/:id",(req,res)=>{
+    peopleData = peopleData.filter((person)=>person.id!=req.params.id)
+    res.status(204).end()
 })
 
 app.get("/info",(req,res)=>{
