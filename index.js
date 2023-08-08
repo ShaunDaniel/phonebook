@@ -1,10 +1,14 @@
 const express = require("express")
-
+const morgan = require("morgan")
 
 const app = express()
 const port = 3000
 
 app.use(express.json())
+
+morgan.token("req-body",(req)=>{return JSON.stringify(req.body)})
+
+app.use(morgan(':method :url :status :response-time ms :req-body '))
 
 let peopleData = [
     { 
@@ -52,7 +56,6 @@ app.post("/api/persons",(req,res)=>{
     const dupliName = peopleData.some((person)=>person.name.toLowerCase()==contact.name.toLowerCase())
     const dupliNum = peopleData.some((person)=>person.number==contact.number)
     
-    console.log(req.body)
     
     if(!req.body.name || !req.body.number){
         return res.status(400).send("Content missing from body.")
