@@ -13,7 +13,7 @@ import Footer from "./components/Footer.js"
 const App = () => {
   
   const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState({ id:0,name: "", number: "" });
+  const [newName, setNewName] = useState({ name: "", number: "" });
   const [filtered, setFiltered] = useState(false);
   const [filter_query, setFilterQuery] = useState("");
   const [alert,setAlert] = useState({
@@ -21,11 +21,14 @@ const App = () => {
     alertText: ""
   })
 
-
-  useEffect(() => {
+  const updatePersons= () =>{
     contactService.getAll().then((res) => {
       setPersons(res.data);
     });
+  }
+
+  useEffect(() => {
+    updatePersons()
   }, []);
 
 
@@ -53,18 +56,19 @@ const App = () => {
   // storing states of name & number input fields
 
   const handleNumber = (e) => {
-    setNewName({ ...newName, number: e.target.value, id:persons.length+1 });
+    setNewName({ ...newName, number: e.target.value});
   };
 
   const handleName = (e) => {
-    setNewName({ ...newName, name: e.target.value,id:persons.length+1 });
+    setNewName({ ...newName, name: e.target.value});
   };
 
 
   const handleDelete = (e) =>{
-    const deleteConfirm = window.confirm(`Do you wish to delete ${persons.find((person) => person.id===Number((e.target.value))).name}?`)
+    const deleteConfirm = window.confirm(`Do you wish to delete ${persons.find((person) => person.id===(e.target.value)).name}?`)
+    
     if(deleteConfirm){contactService.deleteContact(e.target.value).then((res)=>{
-      setPersons(persons.filter((person)=>person.id!==Number(e.target.value)))
+      setPersons(persons.filter((person)=>person.id!==e.target.value))
       setAlert({alert:"d-block row mx-2 w-50 lh-1 alert alert-success",alertText:"Contact deleted successfully!"})
       resetAlert() 
     }).catch((error)=>{
@@ -75,13 +79,18 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault();
+
     var dupliCheck = persons.some((person) => person.name.toUpperCase() === newName.name.toUpperCase());
     var contCheck = persons.some((person) => person.number === newName.number);
     
     if (dupliCheck) {
       const replaceCheck = window.confirm(`${newName.name} already exists in phonebook! Do you want to replace the old number with ${newName.number}?`);
       const existingContact = persons.filter((person)=>person.name.toUpperCase()===newName.name.toUpperCase())[0]
-      if(replaceCheck) {contactService.updateContact({"name":newName.name,"number":newName.number},existingContact.id).then((res)=>{
+      
+      if(replaceCheck) {
+        contactService.updateContact({"name":newName.name,"number":newName.number},existingContact.id)
+        .then((res)=>{
+        
         setPersons(persons.map(person => person.id === existingContact.id ? { ...person, number: newName.number } : person));
         setAlert({alert:"d-block row mx-2 w-50 lh-1 alert alert-success",alertText:"Contact updated successfully!"})
         resetAlert() 
@@ -95,13 +104,19 @@ const App = () => {
     } 
     
     else {
-
-      contactService.createContact(newName).then((res)=>{
-        setPersons([...persons,newName])
+        contactService.createContact(newName).then((res)=>{
+        updatePersons()
         setNewName({name:"",number:"",id:0})
         setAlert({alert:"d-block row mx-2 w-50 lh-1 alert alert-success",alertText:"Contact added successfully!"})
         resetAlert()  
-      })     
+      })
+      .catch((error)=>{
+        setAlert({
+          alert: "d-block row mx-2 w-50 lh-1 alert alert-danger",
+          alertText: `Error adding contact: ${error.message}`,
+        });
+        resetAlert();
+      })
     }
   };
 

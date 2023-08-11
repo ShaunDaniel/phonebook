@@ -7,9 +7,9 @@ const AddContact = (props) => {
           <Alert alerts={props.alert.alert} alertText={props.alert.alertText} />
           <div className="col-12 col-md-10 col-lg-8 col-xl-6">
           <label htmlFor="contact-name" className="form-label">Name: </label> 
-          <input className="form-control" id="contact-name" value={props.newName.name} onChange={props.handleName}/>
+          <input className="form-control" id="contact-name" value={props.newName.name} onChange={props.handleName} required/>
           <label htmlFor="contact-phone" className="form-label">Phone: </label>        
-          <input className="form-control" id="contact-phone" value={props.newName.number} onChange={props.handleNumber}/>
+          <input className="form-control" id="contact-phone" value={props.newName.number} onChange={props.handleNumber} required/>
 
         </div>
         <div>
